@@ -26,6 +26,7 @@
             text-align: center;
             width: 90%;
             max-width: 450px;
+            /* 印刷時にここを消すと中身も消えるので、display:noneはしない */
         }
 
         h1 {
@@ -111,7 +112,7 @@
         }
 
         #result {
-            font-size: 4rem;
+            font-size: 4rem; /* 通常時のサイズ */
             font-weight: bold;
             color: #2c3e50;
         }
@@ -157,30 +158,25 @@
             color: white;
         }
 
-        /* --- 印刷専用の強力なスタイル設定 --- */
+        /* --- 印刷専用の設定（修正済み） --- */
         @media print {
-            /* 余白削除設定 */
-            @page {
-                margin: 0;
-                size: auto;
-            }
+            @page { margin: 0; size: auto; }
 
-            /* 全要素を非表示のち、結果だけ表示 */
+            /* 一旦すべてを「見えなく」する（場所は取る） */
             body * {
+                visibility: hidden; 
+            }
+            
+            /* 背景や影を消すが、要素自体は消さない（display:noneしない） */
+            .container {
                 visibility: hidden;
+                box-shadow: none;
+                background: none;
+                border: none;
+                position: static;
             }
 
-            /* ページの基本設定リセット */
-            body, html {
-                height: 100%;
-                width: 100%;
-                margin: 0;
-                padding: 0;
-                background-color: white;
-                overflow: hidden; /* 余計なページが出ないように */
-            }
-
-            /* 結果エリアの強制配置 */
+            /* 結果エリアだけを「見える」ようにし、画面固定で最前面に持ってくる */
             #result-area {
                 visibility: visible !important;
                 position: fixed;
@@ -192,30 +188,28 @@
                 padding: 0;
                 z-index: 9999;
                 
-                /* どんな端末でも中央に配置するFlexbox設定 */
                 display: flex !important;
                 justify-content: center;
                 align-items: center;
+                background-color: white; /* 背景を白で塗りつぶす */
             }
 
+            /* 数字自体も見えるようにする */
             #result-area * {
                 visibility: visible !important;
             }
 
-            /* 数字のスタイル */
+            /* 印刷時のフォントサイズ（紙に合わせて最大化） */
             #result {
-                /* vmin = 縦横の短い方の長さを基準にする */
-                /* これにより縦向きでも横向きでも紙からはみ出さず最大化される */
-                font-size: 40vmin; 
+                font-size: 40vmin !important; 
                 line-height: 1;
                 color: black;
-                text-align: center;
                 width: 100%;
-                margin: 0;
+                text-align: center;
             }
 
-            /* 余計な要素を完全に消去 */
-            .container, .input-group, h1, .status-text, .btn, .history-container, .error {
+            /* 不要な要素は完全に消す（場所も詰めたい場合） */
+            .input-group, h1, .status-text, .btn, .history-container, .error {
                 display: none !important;
             }
         }
