@@ -26,7 +26,6 @@
             text-align: center;
             width: 90%;
             max-width: 450px;
-            /* 印刷時にここを消すと中身も消えるので、display:noneはしない */
         }
 
         h1 {
@@ -112,7 +111,7 @@
         }
 
         #result {
-            font-size: 4rem; /* 通常時のサイズ */
+            font-size: 4rem;
             font-weight: bold;
             color: #2c3e50;
         }
@@ -158,16 +157,16 @@
             color: white;
         }
 
-        /* --- 印刷専用の設定（修正済み） --- */
+        /* --- 印刷専用の設定 --- */
         @media print {
             @page { margin: 0; size: auto; }
 
-            /* 一旦すべてを「見えなく」する（場所は取る） */
+            /* 全体を隠す */
             body * {
                 visibility: hidden; 
             }
             
-            /* 背景や影を消すが、要素自体は消さない（display:noneしない） */
+            /* コンテナなどは非表示だが場所は確保しておく（バグ防止） */
             .container {
                 visibility: hidden;
                 box-shadow: none;
@@ -176,7 +175,7 @@
                 position: static;
             }
 
-            /* 結果エリアだけを「見える」ようにし、画面固定で最前面に持ってくる */
+            /* 結果エリアを画面全体に強制表示 */
             #result-area {
                 visibility: visible !important;
                 position: fixed;
@@ -191,15 +190,15 @@
                 display: flex !important;
                 justify-content: center;
                 align-items: center;
-                background-color: white; /* 背景を白で塗りつぶす */
+                background-color: white;
             }
 
-            /* 数字自体も見えるようにする */
+            /* 数字を表示 */
             #result-area * {
                 visibility: visible !important;
             }
 
-            /* 印刷時のフォントサイズ（紙に合わせて最大化） */
+            /* 数字サイズ調整 */
             #result {
                 font-size: 40vmin !important; 
                 line-height: 1;
@@ -208,7 +207,7 @@
                 text-align: center;
             }
 
-            /* 不要な要素は完全に消す（場所も詰めたい場合） */
+            /* 不要な要素を完全に消す */
             .input-group, h1, .status-text, .btn, .history-container, .error {
                 display: none !important;
             }
@@ -264,7 +263,25 @@
 
         updateStatus();
 
-        generateBtn.addEventListener('click', function() {
+        // --- スタート処理 ---
+        generateBtn.addEventListener('click', startLottery);
+
+        // --- エンターキー処理（追加機能） ---
+        document.addEventListener('keydown', function(event) {
+            // エンターキーが押されたとき
+            if (event.key === 'Enter') {
+                // リセットボタンや印刷ボタンにフォーカスがある時はそちらを優先
+                if (document.activeElement === resetBtn || document.activeElement === copyPrintBtn) {
+                    return;
+                }
+                
+                event.preventDefault(); // 画面スクロールなどを防ぐ
+                generateBtn.click();    // スタートボタンをクリックしたことにする
+            }
+        });
+
+        // 抽選ロジック
+        function startLottery() {
             if (isAnimating) return;
 
             const min = parseInt(minInput.value);
@@ -322,8 +339,9 @@
                     updateStatus();
                 }
             }, intervalTime);
-        });
+        }
 
+        // コピー＆印刷ボタン
         copyPrintBtn.addEventListener('click', function() {
             const resultText = resultDisplay.innerText;
             if (resultText === '?' || isAnimating) return;
@@ -335,6 +353,7 @@
             }
         });
 
+        // リセット機能
         resetBtn.addEventListener('click', resetGame);
         minInput.addEventListener('change', resetGame);
         maxInput.addEventListener('change', resetGame);
