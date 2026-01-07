@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ランダム番号メーカー</title>
     <link rel="icon" href="https://www.bannerkoubou.com/image_gif_animation/gWex1wJE48l6oaytwAKG1765542170-1765542252.gif" type="image/png">
-  <link rel="apple-touch-icon" href="https://www.bannerkoubou.com/image_gif_animation/gWex1wJE48l6oaytwAKG1765542170-1765542252.gif" type="image/png">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" href="https://www.bannerkoubou.com/image_gif_animation/gWex1wJE48l6oaytwAKG1765542170-1765542252.gif" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
-        /* --- 通常時のデザイン --- */
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
             background-color: #f0f2f5;
@@ -79,7 +79,6 @@
             border-color: #3498db;
         }
 
-        /* ボタン類 */
         .btn {
             border: none;
             padding: 12px 24px;
@@ -92,6 +91,7 @@
             margin-bottom: 10px;
             color: white;
         }
+
         .btn:active { transform: scale(0.98); }
 
         #generateBtn { background-color: #3498db; }
@@ -126,19 +126,20 @@
             min-height: 1.2em;
         }
 
-        /* 履歴エリア */
         .history-container {
             margin-top: 30px;
             border-top: 2px dashed #eee;
             padding-top: 15px;
             text-align: left;
         }
+
         .history-title {
             font-size: 0.9rem;
             color: #7f8c8d;
             margin-bottom: 10px;
             text-align: center;
         }
+
         #history-list {
             display: flex;
             flex-wrap: wrap;
@@ -147,6 +148,7 @@
             max-height: 150px;
             overflow-y: auto;
         }
+
         .history-item {
             background-color: #f1f1f1;
             color: #555;
@@ -155,68 +157,59 @@
             font-size: 0.9rem;
             font-weight: bold;
         }
+
         .history-item.latest {
             background-color: #3498db;
             color: white;
         }
 
-        /* --- 印刷専用の設定 --- */
+        /* ===== 印刷設定：48mm × 48mm 固定 ===== */
         @media print {
-            @page { margin: 0; size: auto; }
+            @page {
+                margin: 0;
+                size: 48mm 48mm;
+            }
 
-            /* 全体を隠す */
             body * {
-                visibility: hidden; 
-            }
-            
-            /* コンテナなどは非表示だが場所は確保しておく（バグ防止） */
-            .container {
                 visibility: hidden;
-                box-shadow: none;
-                background: none;
-                border: none;
-                position: static;
             }
 
-            /* 結果エリアを画面全体に強制表示 */
             #result-area {
                 visibility: visible !important;
                 position: fixed;
                 top: 0;
                 left: 0;
-                width: 100%;
-                height: 100%;
+                width: 48mm;
+                height: 48mm;
                 margin: 0;
                 padding: 0;
-                z-index: 9999;
-                
+
                 display: flex !important;
                 justify-content: center;
                 align-items: center;
+
                 background-color: white;
             }
 
-            /* 数字を表示 */
             #result-area * {
                 visibility: visible !important;
             }
 
-            /* 数字サイズ調整 */
             #result {
-                font-size: 40vmin !important; 
+                font-size: 28mm !important;
                 line-height: 1;
                 color: black;
                 width: 100%;
                 text-align: center;
             }
 
-            /* 不要な要素を完全に消す */
-            .input-group, h1, .status-text, .btn, .history-container, .error {
+            .input-group, h1, .status-text, .btn, .history-container, .error, .container {
                 display: none !important;
             }
         }
     </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -237,7 +230,7 @@
         <button id="generateBtn" class="btn">スタート！</button>
         <button id="copyPrintBtn" class="btn">結果をコピー＆印刷</button>
         <button id="resetBtn" class="btn">リセット</button>
-        
+
         <div class="error" id="errorMsg"></div>
 
         <div id="result-area">
@@ -260,30 +253,22 @@
         const minInput = document.getElementById('min');
         const maxInput = document.getElementById('max');
         const historyList = document.getElementById('history-list');
-        
+
         let isAnimating = false;
-        let generatedNumbers = new Set(); 
+        let generatedNumbers = new Set();
 
         updateStatus();
 
-        // --- スタート処理 ---
         generateBtn.addEventListener('click', startLottery);
 
-        // --- エンターキー処理（追加機能） ---
         document.addEventListener('keydown', function(event) {
-            // エンターキーが押されたとき
             if (event.key === 'Enter') {
-                // リセットボタンや印刷ボタンにフォーカスがある時はそちらを優先
-                if (document.activeElement === resetBtn || document.activeElement === copyPrintBtn) {
-                    return;
-                }
-                
-                event.preventDefault(); // 画面スクロールなどを防ぐ
-                generateBtn.click();    // スタートボタンをクリックしたことにする
+                if (document.activeElement === resetBtn || document.activeElement === copyPrintBtn) return;
+                event.preventDefault();
+                generateBtn.click();
             }
         });
 
-        // 抽選ロジック
         function startLottery() {
             if (isAnimating) return;
 
@@ -315,7 +300,7 @@
             let counter = 0;
             const animationDuration = 800;
             const intervalTime = 50;
-            
+
             const interval = setInterval(() => {
                 const tempNum = Math.floor(Math.random() * (max - min + 1)) + min;
                 resultDisplay.innerText = tempNum;
@@ -323,7 +308,7 @@
 
                 if (counter >= animationDuration) {
                     clearInterval(interval);
-                    
+
                     let finalNum;
                     do {
                         finalNum = Math.floor(Math.random() * (max - min + 1)) + min;
@@ -338,13 +323,12 @@
                     generateBtn.style.opacity = "1";
                     generateBtn.innerText = "次の番号へ";
                     copyPrintBtn.style.display = 'inline-block';
-                    
+
                     updateStatus();
                 }
             }, intervalTime);
         }
 
-        // コピー＆印刷ボタン
         copyPrintBtn.addEventListener('click', function() {
             const resultText = resultDisplay.innerText;
             if (resultText === '?' || isAnimating) return;
@@ -356,7 +340,6 @@
             }
         });
 
-        // リセット機能
         resetBtn.addEventListener('click', resetGame);
         minInput.addEventListener('change', resetGame);
         maxInput.addEventListener('change', resetGame);
@@ -388,9 +371,8 @@
 
         function addHistory(num) {
             const prevLatest = document.querySelector('.history-item.latest');
-            if (prevLatest) {
-                prevLatest.classList.remove('latest');
-            }
+            if (prevLatest) prevLatest.classList.remove('latest');
+
             const span = document.createElement('span');
             span.className = 'history-item latest';
             span.innerText = num;
