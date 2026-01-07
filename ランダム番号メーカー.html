@@ -9,6 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
+        /* ===============================
+           画面表示用のスタイル
+        ===============================*/
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
             background-color: #f0f2f5;
@@ -164,7 +167,7 @@
         }
 
         /* ===============================
-           印刷設定：48mm × 48mm 固定
+           印刷設定：48mm × 48mm に1枚だけ出力
         ===============================*/
         @media print {
             @page {
@@ -172,47 +175,45 @@
                 margin: 0;
             }
 
-            body * {
-                visibility: hidden;
-            }
-
-            #result-area {
-                visibility: visible !important;
-                position: fixed;
-                top: 0;
-                left: 0;
+            /* 画面上の全ての要素を非表示にする */
+            html, body {
                 width: 48mm;
                 height: 48mm;
-                margin: 0;
-                padding: 0;
-
-                display: flex !important;
-                justify-content: center;
-                align-items: center;
-
-                background-color: white;
+                margin: 0 !important;
+                padding: 0 !important;
+                background-color: white !important;
+                overflow: hidden; /* 余計なページ送りを防ぐ */
             }
 
-            #result-area * {
+            .container {
+                display: none !important; /* メイン容器を非表示 */
+            }
+
+            /* 結果エリアのみを強制表示して全画面に広げる */
+            #result-area {
                 visibility: visible !important;
+                display: flex !important;
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 48mm !important;
+                height: 48mm !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background-color: white !important;
+                z-index: 9999;
+                justify-content: center;
+                align-items: center;
             }
 
             #result {
-                font-size: 28mm !important;
+                visibility: visible !important;
+                font-size: 28mm !important; /* フォントサイズを調整 */
+                color: black !important;
+                font-weight: bold;
                 line-height: 1;
-                color: black;
-                width: 100%;
-                text-align: center;
-            }
-
-            /* ここに .container は入れないことが重要 */
-            .input-group,
-            h1,
-            .status-text,
-            .btn,
-            .history-container,
-            .error {
-                display: none !important;
+                margin: 0;
+                padding: 0;
             }
         }
     </style>
@@ -269,6 +270,7 @@
 
         generateBtn.addEventListener('click', startLottery);
 
+        // Enterキーでスタート
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Enter') {
                 if (document.activeElement === resetBtn || document.activeElement === copyPrintBtn) return;
@@ -341,8 +343,13 @@
             const resultText = resultDisplay.innerText;
             if (resultText === '?' || isAnimating) return;
 
+            // クリップボードにコピーしてから印刷ダイアログを開く
             if (navigator.clipboard) {
-                navigator.clipboard.writeText(resultText).then(() => window.print()).catch(() => window.print());
+                navigator.clipboard.writeText(resultText).then(() => {
+                    window.print();
+                }).catch(() => {
+                    window.print();
+                });
             } else {
                 window.print();
             }
