@@ -163,11 +163,13 @@
             color: white;
         }
 
-        /* ===== 印刷設定：48mm × 48mm 固定 ===== */
+        /* ===============================
+           印刷設定：48mm × 48mm 固定
+        ===============================*/
         @media print {
             @page {
-                margin: 0;
                 size: 48mm 48mm;
+                margin: 0;
             }
 
             body * {
@@ -203,7 +205,13 @@
                 text-align: center;
             }
 
-            .input-group, h1, .status-text, .btn, .history-container, .error, .container {
+            /* ここに .container は入れないことが重要 */
+            .input-group,
+            h1,
+            .status-text,
+            .btn,
+            .history-container,
+            .error {
                 display: none !important;
             }
         }
