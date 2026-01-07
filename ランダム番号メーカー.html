@@ -1,391 +1,279 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ランダム番号メーカー</title>
-    <link rel="icon" href="https://www.bannerkoubou.com/image_gif_animation/gWex1wJE48l6oaytwAKG1765542170-1765542252.gif" type="image/png">
-    <link rel="apple-touch-icon" href="https://www.bannerkoubou.com/image_gif_animation/gWex1wJE48l6oaytwAKG1765542170-1765542252.gif" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ランダム番号メーカー</title>
+<link rel="icon" href="https://www.bannerkoubou.com/image_gif_animation/gWex1wJE48l6oaytwAKG1765542170-1765542252.gif">
+<link rel="apple-touch-icon" href="https://www.bannerkoubou.com/image_gif_animation/gWex1wJE48l6oaytwAKG1765542170-1765542252.gif">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
 
-    <style>
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f0f2f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            color: #333;
-            padding: 20px 0;
-        }
+<style>
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    color: #333;
+    padding: 20px 0;
+}
 
-        .container {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            text-align: center;
-            width: 90%;
-            max-width: 450px;
-        }
+.container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    text-align: center;
+    width: 90%;
+    max-width: 450px;
+}
 
-        h1 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: #2c3e50;
-        }
+h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+}
 
-        .status-text {
-            font-size: 0.85rem;
-            color: #7f8c8d;
-            margin-bottom: 1.5rem;
-            min-height: 1.2em;
-        }
+.status-text {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+    margin-bottom: 1.5rem;
+    min-height: 1.2em;
+}
 
-        .input-group {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
+.input-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+}
 
-        .input-wrapper {
-            display: flex;
-            flex-direction: column;
-            width: 48%;
-        }
+.input-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 48%;
+}
 
-        label {
-            font-size: 0.8rem;
-            margin-bottom: 5px;
-            color: #666;
-        }
+label {
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+    color: #666;
+}
 
-        input[type="number"] {
-            padding: 10px;
-            font-size: 1rem;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            text-align: center;
-            outline: none;
-            transition: border-color 0.3s;
-            width: 100%;
-            box-sizing: border-box;
-        }
+input[type="number"] {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-align: center;
+    width: 100%;
+}
 
-        input[type="number"]:focus {
-            border-color: #3498db;
-        }
+.btn {
+    border: none;
+    padding: 12px 24px;
+    font-size: 1rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+    margin-bottom: 10px;
+    color: white;
+}
 
-        .btn {
-            border: none;
-            padding: 12px 24px;
-            font-size: 1rem;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
-            width: 100%;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: white;
-        }
+#generateBtn { background-color: #3498db; }
+#copyPrintBtn { background-color: #27ae60; display: none; }
+#resetBtn { background-color: #e74c3c; }
 
-        .btn:active { transform: scale(0.98); }
+#result-area {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-        #generateBtn { background-color: #3498db; }
-        #generateBtn:hover { background-color: #2980b9; }
-        #generateBtn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+#result {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
 
-        #copyPrintBtn { background-color: #27ae60; display: none; }
-        #copyPrintBtn:hover { background-color: #219150; }
+.history-container {
+    margin-top: 30px;
+    border-top: 2px dashed #eee;
+    padding-top: 15px;
+}
 
-        #resetBtn { background-color: #e74c3c; margin-top: 5px;}
-        #resetBtn:hover { background-color: #c0392b; }
+.history-title {
+    text-align: center;
+    color: #777;
+    margin-bottom: 10px;
+}
 
-        #result-area {
-            margin-top: 20px;
-            margin-bottom: 20px;
-            height: 100px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+.history-item {
+    background: #eee;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-weight: bold;
+    margin: 3px;
+}
 
-        #result {
-            font-size: 4rem;
-            font-weight: bold;
-            color: #2c3e50;
-        }
+.history-item.latest {
+    background: #3498db;
+    color: #fff;
+}
 
-        .error {
-            color: #e74c3c;
-            font-size: 0.9rem;
-            margin-top: 5px;
-            min-height: 1.2em;
-        }
+/* 🔽🔽🔽 ここが「1枚だけ印刷」の設定 🔽🔽🔽 */
+@media print {
 
-        .history-container {
-            margin-top: 30px;
-            border-top: 2px dashed #eee;
-            padding-top: 15px;
-            text-align: left;
-        }
+    @page {
+        size: 48mm 48mm;
+        margin: 0;
+    }
 
-        .history-title {
-            font-size: 0.9rem;
-            color: #7f8c8d;
-            margin-bottom: 10px;
-            text-align: center;
-        }
+    /* 1ページ固定・スクロール禁止 */
+    html, body {
+        width: 48mm;
+        height: 48mm;
+        overflow: hidden !important;
+    }
 
-        #history-list {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 8px;
-            max-height: 150px;
-            overflow-y: auto;
-        }
+    /* 画面の他の要素は非表示 */
+    body * {
+        visibility: hidden;
+    }
 
-        .history-item {
-            background-color: #f1f1f1;
-            color: #555;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: bold;
-        }
+    /* 印刷するのはここだけ */
+    #result-area {
+        visibility: visible !important;
 
-        .history-item.latest {
-            background-color: #3498db;
-            color: white;
-        }
+        position: fixed;
+        top: 0;
+        left: 0;
 
-        /* ===============================
-           印刷設定：48mm × 48mm 固定
-        ===============================*/
-        @media print {
-            @page {
-                size: 48mm 48mm;
-                margin: 0;
-            }
+        width: 48mm;
+        height: 48mm;
 
-            body * {
-                visibility: hidden;
-            }
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
 
-            #result-area {
-                visibility: visible !important;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 48mm;
-                height: 48mm;
-                margin: 0;
-                padding: 0;
+        background: white;
 
-                display: flex !important;
-                justify-content: center;
-                align-items: center;
+        /* 改ページ完全禁止 */
+        page-break-before: avoid;
+        page-break-after: avoid;
+        page-break-inside: avoid;
+    }
 
-                background-color: white;
-            }
+    #result-area * {
+        visibility: visible !important;
+    }
 
-            #result-area * {
-                visibility: visible !important;
-            }
+    #result {
+        font-size: 28mm !important;
+        line-height: 1;
+        text-align: center;
+    }
 
-            #result {
-                font-size: 28mm !important;
-                line-height: 1;
-                color: black;
-                width: 100%;
-                text-align: center;
-            }
-
-            /* ここに .container は入れないことが重要 */
-            .input-group,
-            h1,
-            .status-text,
-            .btn,
-            .history-container,
-            .error {
-                display: none !important;
-            }
-        }
-    </style>
+    /* その他は印刷しない */
+    .container,
+    .btn,
+    .history-container,
+    .input-group,
+    .status-text,
+    h1,
+    .error {
+        display: none !important;
+    }
+}
+</style>
 </head>
 
 <body>
 
-    <div class="container">
-        <h1>ランダム番号メーカー</h1>
-        <div class="status-text" id="statusText">残り枚数: 計算中...</div>
+<div class="container">
+    <h1>ランダム番号メーカー</h1>
+    <div id="statusText">残り枚数: 計算中...</div>
 
-        <div class="input-group">
-            <div class="input-wrapper">
-                <label for="min">最小値</label>
-                <input type="number" id="min" value="1">
-            </div>
-            <div class="input-wrapper">
-                <label for="max">最大値</label>
-                <input type="number" id="max" value="100">
-            </div>
+    <div class="input-group">
+        <div class="input-wrapper">
+            <label>最小値</label>
+            <input type="number" id="min" value="1">
         </div>
-
-        <button id="generateBtn" class="btn">スタート！</button>
-        <button id="copyPrintBtn" class="btn">結果をコピー＆印刷</button>
-        <button id="resetBtn" class="btn">リセット</button>
-
-        <div class="error" id="errorMsg"></div>
-
-        <div id="result-area">
-            <div id="result">?</div>
-        </div>
-
-        <div class="history-container">
-            <div class="history-title">出た数字の履歴</div>
-            <div id="history-list"></div>
+        <div class="input-wrapper">
+            <label>最大値</label>
+            <input type="number" id="max" value="100">
         </div>
     </div>
 
-    <script>
-        const generateBtn = document.getElementById('generateBtn');
-        const copyPrintBtn = document.getElementById('copyPrintBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const resultDisplay = document.getElementById('result');
-        const errorMsg = document.getElementById('errorMsg');
-        const statusText = document.getElementById('statusText');
-        const minInput = document.getElementById('min');
-        const maxInput = document.getElementById('max');
-        const historyList = document.getElementById('history-list');
+    <button id="generateBtn" class="btn">スタート！</button>
+    <button id="copyPrintBtn" class="btn">結果をコピー＆印刷</button>
+    <button id="resetBtn" class="btn">リセット</button>
 
-        let isAnimating = false;
-        let generatedNumbers = new Set();
+    <div id="errorMsg" class="error"></div>
 
-        updateStatus();
+    <div id="result-area">
+        <div id="result">?</div>
+    </div>
 
-        generateBtn.addEventListener('click', startLottery);
+    <div class="history-container">
+        <div class="history-title">履歴</div>
+        <div id="history-list"></div>
+    </div>
+</div>
 
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter') {
-                if (document.activeElement === resetBtn || document.activeElement === copyPrintBtn) return;
-                event.preventDefault();
-                generateBtn.click();
-            }
-        });
+<script>
+const generateBtn = document.getElementById('generateBtn');
+const copyPrintBtn = document.getElementById('copyPrintBtn');
+const resetBtn = document.getElementById('resetBtn');
+const resultDisplay = document.getElementById('result');
+const minInput = document.getElementById('min');
+const maxInput = document.getElementById('max');
+const historyList = document.getElementById('history-list');
 
-        function startLottery() {
-            if (isAnimating) return;
+let generatedNumbers = new Set();
+let isAnimating = false;
 
-            const min = parseInt(minInput.value);
-            const max = parseInt(maxInput.value);
+generateBtn.addEventListener('click', startLottery);
 
-            if (isNaN(min) || isNaN(max)) {
-                errorMsg.innerText = "数値を入力してください";
-                return;
-            }
-            if (min >= max) {
-                errorMsg.innerText = "最小値は最大値より小さくしてください";
-                return;
-            }
+function startLottery() {
+    if (isAnimating) return;
 
-            const totalCount = max - min + 1;
-            if (generatedNumbers.size >= totalCount) {
-                errorMsg.innerText = "全ての番号が出ました！リセットしてください。";
-                generateBtn.disabled = true;
-                return;
-            }
+    const min = parseInt(minInput.value);
+    const max = parseInt(maxInput.value);
+    const total = max - min + 1;
 
-            copyPrintBtn.style.display = 'none';
-            errorMsg.innerText = "";
-            isAnimating = true;
-            generateBtn.style.opacity = "0.7";
-            generateBtn.innerText = "抽選中...";
+    if (generatedNumbers.size >= total) return;
 
-            let counter = 0;
-            const animationDuration = 800;
-            const intervalTime = 50;
+    isAnimating = true;
 
-            const interval = setInterval(() => {
-                const tempNum = Math.floor(Math.random() * (max - min + 1)) + min;
-                resultDisplay.innerText = tempNum;
-                counter += intervalTime;
+    let final;
+    do {
+        final = Math.floor(Math.random() * (max - min + 1)) + min;
+    } while (generatedNumbers.has(final));
 
-                if (counter >= animationDuration) {
-                    clearInterval(interval);
+    generatedNumbers.add(final);
 
-                    let finalNum;
-                    do {
-                        finalNum = Math.floor(Math.random() * (max - min + 1)) + min;
-                    } while (generatedNumbers.has(finalNum));
+    resultDisplay.textContent = final;
 
-                    generatedNumbers.add(finalNum);
+    const span = document.createElement("span");
+    span.className = "history-item latest";
+    span.textContent = final;
+    historyList.prepend(span);
 
-                    resultDisplay.innerText = finalNum;
-                    addHistory(finalNum);
+    copyPrintBtn.style.display = "inline-block";
+    isAnimating = false;
+}
 
-                    isAnimating = false;
-                    generateBtn.style.opacity = "1";
-                    generateBtn.innerText = "次の番号へ";
-                    copyPrintBtn.style.display = 'inline-block';
+copyPrintBtn.addEventListener('click', () => window.print());
+resetBtn.addEventListener('click', () => location.reload());
+</script>
 
-                    updateStatus();
-                }
-            }, intervalTime);
-        }
-
-        copyPrintBtn.addEventListener('click', function() {
-            const resultText = resultDisplay.innerText;
-            if (resultText === '?' || isAnimating) return;
-
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(resultText).then(() => window.print()).catch(() => window.print());
-            } else {
-                window.print();
-            }
-        });
-
-        resetBtn.addEventListener('click', resetGame);
-        minInput.addEventListener('change', resetGame);
-        maxInput.addEventListener('change', resetGame);
-
-        function resetGame() {
-            generatedNumbers.clear();
-            resultDisplay.innerText = "?";
-            generateBtn.innerText = "スタート！";
-            generateBtn.disabled = false;
-            generateBtn.style.opacity = "1";
-            copyPrintBtn.style.display = 'none';
-            errorMsg.innerText = "";
-            historyList.innerHTML = "";
-            updateStatus();
-        }
-
-        function updateStatus() {
-            const min = parseInt(minInput.value);
-            const max = parseInt(maxInput.value);
-            if (!isNaN(min) && !isNaN(max) && min < max) {
-                const total = max - min + 1;
-                const count = generatedNumbers.size;
-                const remaining = total - count;
-                statusText.innerText = `出た数: ${count} / 残り: ${remaining}`;
-            } else {
-                statusText.innerText = "";
-            }
-        }
-
-        function addHistory(num) {
-            const prevLatest = document.querySelector('.history-item.latest');
-            if (prevLatest) prevLatest.classList.remove('latest');
-
-            const span = document.createElement('span');
-            span.className = 'history-item latest';
-            span.innerText = num;
-            historyList.prepend(span);
-        }
-    </script>
 </body>
 </html>
