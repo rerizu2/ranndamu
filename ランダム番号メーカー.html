@@ -166,8 +166,13 @@
             color: white;
         }
 
+        /* 印刷用エリア（通常時は隠す） */
+        #print-section {
+            display: none;
+        }
+
         /* ===============================
-           印刷設定：48mm × 48mm に1枚だけ出力
+           印刷設定（48mm × 48mm）
         ===============================*/
         @media print {
             @page {
@@ -175,42 +180,36 @@
                 margin: 0;
             }
 
-            /* 画面上の全ての要素を非表示にする */
+            /* 全ての要素を一旦消去 */
             html, body {
                 width: 48mm;
                 height: 48mm;
                 margin: 0 !important;
                 padding: 0 !important;
                 background-color: white !important;
-                overflow: hidden; /* 余計なページ送りを防ぐ */
+                overflow: hidden; /* はみ出しによる複数枚印刷を防止 */
             }
 
             .container {
-                display: none !important; /* メイン容器を非表示 */
+                display: none !important; /* メインUIを完全に消す */
             }
 
-            /* 結果エリアのみを強制表示して全画面に広げる */
-            #result-area {
-                visibility: visible !important;
+            /* 印刷用エリアだけを強制表示 */
+            #print-section {
                 display: flex !important;
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 48mm !important;
-                height: 48mm !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                background-color: white !important;
-                z-index: 9999;
+                width: 48mm;
+                height: 48mm;
                 justify-content: center;
                 align-items: center;
+                position: absolute;
+                top: 0;
+                left: 0;
             }
 
-            #result {
-                visibility: visible !important;
-                font-size: 28mm !important; /* フォントサイズを調整 */
-                color: black !important;
+            #print-number {
+                font-size: 28mm;
                 font-weight: bold;
+                color: black;
                 line-height: 1;
                 margin: 0;
                 padding: 0;
@@ -252,11 +251,17 @@
         </div>
     </div>
 
+    <!-- 印刷時のみ中身が入って表示される -->
+    <div id="print-section">
+        <span id="print-number"></span>
+    </div>
+
     <script>
         const generateBtn = document.getElementById('generateBtn');
         const copyPrintBtn = document.getElementById('copyPrintBtn');
         const resetBtn = document.getElementById('resetBtn');
         const resultDisplay = document.getElementById('result');
+        const printNumber = document.getElementById('print-number');
         const errorMsg = document.getElementById('errorMsg');
         const statusText = document.getElementById('statusText');
         const minInput = document.getElementById('min');
@@ -270,7 +275,6 @@
 
         generateBtn.addEventListener('click', startLottery);
 
-        // Enterキーでスタート
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Enter') {
                 if (document.activeElement === resetBtn || document.activeElement === copyPrintBtn) return;
@@ -327,6 +331,7 @@
                     generatedNumbers.add(finalNum);
 
                     resultDisplay.innerText = finalNum;
+                    printNumber.innerText = finalNum; // 印刷用エリアにセット
                     addHistory(finalNum);
 
                     isAnimating = false;
@@ -343,7 +348,8 @@
             const resultText = resultDisplay.innerText;
             if (resultText === '?' || isAnimating) return;
 
-            // クリップボードにコピーしてから印刷ダイアログを開く
+            printNumber.innerText = resultText;
+
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(resultText).then(() => {
                     window.print();
@@ -362,6 +368,7 @@
         function resetGame() {
             generatedNumbers.clear();
             resultDisplay.innerText = "?";
+            printNumber.innerText = "";
             generateBtn.innerText = "スタート！";
             generateBtn.disabled = false;
             generateBtn.style.opacity = "1";
